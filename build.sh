@@ -1,0 +1,1 @@
+spago bundle-app --main Main --to public/app.bundle.min.js &&  uglifyjs public/app.bundle.min.js --output public/app.bundle.min.js
