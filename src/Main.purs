@@ -180,7 +180,7 @@ view model =
           , H.div
               [ A.class' "mt3" ]
               [ H.pre
-                  [ A.class' "center measure overflow-x-auto courier db" ]
+                  [ A.class' "center measure-wide overflow-x-auto courier db" ]
                   [ H.text $ renderText displayObject ]
               ]
           ]
