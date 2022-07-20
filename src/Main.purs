@@ -1,13 +1,13 @@
 module Main where
 
 import Prelude
-import Effect.Class (liftEffect)
 import Data.Array (fold)
+import Data.Array as Array
 import Data.List (List(..))
 import Data.List as List
-import Data.Maybe (Maybe(..))
-import Data.String as String
+import Data.Maybe (Maybe)
 import Data.Newtype (wrap, unwrap, class Newtype)
+import Data.String as String
 import Data.Tuple (Tuple)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
@@ -18,8 +18,6 @@ import Flame.Application.EffectList (Application)
 import Flame.Html.Attribute as A
 import Flame.Html.Element as H
 import Flame.Html.Event as E
-import Data.Array as Array
-import Effect.Console (log)
 
 type Model
   = { emojiName :: String
@@ -28,21 +26,46 @@ type Model
     }
 
 render :: Model -> DisplayCharacter
-render { emojiName, placeholderName, content } = fold $ characterMatrix emojiName placeholderName <$> String.split (wrap "") content
+render { emojiName, placeholderName, content } =
+  fold <<< Array.intersperse (letterSpacing placeholderName)
+    $ characterMatrix emojiName placeholderName
+    <$> String.split (wrap "") content
 
 renderView :: Model -> DisplayCharacter -> Html Msg
-renderView { emojiName } (DisplayCharacter rows) = H.div_ $ renderRow <$> Array.fromFoldable rows
+renderView { emojiName } (DisplayCharacter rows) =
+  H.div
+    [ A.class' "flex flex-column items-center" ]
+    $ renderRow
+    <$> Array.fromFoldable rows
   where
   renderRow :: List String -> Html Msg
   renderRow columns =
-    H.div_
+    H.div [ A.class' "flex" ]
       $ ( \col ->
             if col == emojiName then
-              H.img [ A.class' "w2 h2 bg-black" ]
+              H.img
+                [ A.class' "flex-shrink-0 ma0 pa0 bn w1.5 h1.5 bg-transparent"
+                , A.src "im_square.gif"
+                ]
             else
-              H.img [ A.class' "w2 h2 bg-white" ]
+              H.img [ A.class' "flex-shrink-0 ma0 pa0 bn w1.5 h1.5 bg-transparent" ]
         )
       <$> Array.fromFoldable columns
+
+newline :: String
+newline =
+  """
+"""
+
+renderText :: DisplayCharacter -> String
+renderText (DisplayCharacter rows) =
+  fold <<< Array.intersperse newline
+    $ (renderRow <$> Array.fromFoldable rows)
+  where
+  renderRow :: List String -> String
+  renderRow (Cons column columns) = ":" <> column <> ":" <> renderRow columns
+
+  renderRow Nil = mempty
 
 data Msg
   = EmojiNameChanged String
@@ -142,7 +165,10 @@ view model =
     , let
         displayObject = render model
       in
-        renderView model displayObject
+        H.div
+          [ A.class' "mt3" ]
+          [ renderView model displayObject
+          ]
     ]
 
 main :: Effect Unit
@@ -173,6 +199,16 @@ instance semigroupDisplayCharacter :: Semigroup DisplayCharacter where
 asDisplayCharacter :: Array (Array String) -> DisplayCharacter
 asDisplayCharacter = map List.fromFoldable >>> List.fromFoldable >>> DisplayCharacter
 
+letterSpacing :: String -> DisplayCharacter
+letterSpacing o =
+  asDisplayCharacter
+    [ [ o ]
+    , [ o ]
+    , [ o ]
+    , [ o ]
+    , [ o ]
+    ]
+
 characterMatrix :: String -> String -> String -> DisplayCharacter
 characterMatrix x o "A" =
   asDisplayCharacter
@@ -185,11 +221,11 @@ characterMatrix x o "A" =
 
 characterMatrix x o "B" =
   asDisplayCharacter
-    [ [ x, x, x ]
+    [ [ x, x, o ]
     , [ x, o, x ]
     , [ x, x, x ]
     , [ x, o, x ]
-    , [ x, x, x ]
+    , [ x, x, o ]
     ]
 
 characterMatrix x o "C" =
