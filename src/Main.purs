@@ -75,12 +75,8 @@ update model (PlaceholderNameChanged placeholderName) =
     /\ mempty
 
 update model (ContentChanged content) =
-  let
-    nextModel = model { content = content }
-
-    logEffect = map (const Nothing) <<< log <<< show $ render nextModel
-  in
-    nextModel /\ [ liftEffect logEffect ]
+  model { content = String.toUpper content }
+    /\ mempty
 
 inputClass :: String
 inputClass = "pa2 black-80 br2 b--light-blue b--solid avenir f5"
@@ -160,7 +156,15 @@ instance showDisplayCharacter :: Show DisplayCharacter where
 
 derive instance newtypeDisplayCharacter :: Newtype DisplayCharacter _
 
-derive newtype instance monoidDisplayCharacter :: Monoid DisplayCharacter
+instance monoidDisplayCharacter :: Monoid DisplayCharacter where
+  mempty =
+    [ []
+    , []
+    , []
+    , []
+    , []
+    ]
+      # asDisplayCharacter
 
 instance semigroupDisplayCharacter :: Semigroup DisplayCharacter where
   append (DisplayCharacter (Cons rowA rowsA)) (DisplayCharacter (Cons rowB rowsB)) = DisplayCharacter $ Cons (rowA <> rowB) (unwrap $ (DisplayCharacter rowsA <> DisplayCharacter rowsB))
@@ -269,12 +273,4 @@ characterMatrix _ o " " =
     , [ o ]
     ]
 
-characterMatrix _ _ _ =
-  asDisplayCharacter
-    [ []
-    , []
-    , []
-    , []
-    , []
-    , []
-    ]
+characterMatrix _ _ _ = mempty
