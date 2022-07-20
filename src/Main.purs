@@ -1,7 +1,7 @@
 module Main where
 
 import Prelude
-import Data.Array (fold)
+import Data.Array (fold, foldl)
 import Data.Array as Array
 import Data.List (List(..))
 import Data.List as List
@@ -26,8 +26,15 @@ type Model
     }
 
 render :: Model -> DisplayCharacter
-render { emojiName, placeholderName, content } =
-  fold <<< Array.intersperse (letterSpacing placeholderName)
+render { content, emojiName, placeholderName } =
+  foldl
+    ( \acc cur ->
+        if cur == characterMatrix emojiName placeholderName " " then
+          acc <> cur
+        else
+          acc <> cur <> characterMatrix emojiName placeholderName " "
+    )
+    mempty
     $ characterMatrix emojiName placeholderName
     <$> String.split (wrap "") content
 
@@ -102,7 +109,7 @@ update model (ContentChanged content) =
     /\ mempty
 
 inputClass :: String
-inputClass = "pa2 black-80 br2 b--light-blue b--solid avenir f5"
+inputClass = "pa2 black-80 br2 b--blue outline-light-blue b--solid avenir f5"
 
 inputLabelClass :: String
 inputLabelClass = "black-70 f5 dib mb1"
@@ -165,9 +172,17 @@ view model =
     , let
         displayObject = render model
       in
-        H.div
-          [ A.class' "mt3" ]
-          [ renderView model displayObject
+        H.div_
+          [ H.div
+              [ A.class' "mt3" ]
+              [ renderView model displayObject
+              ]
+          , H.div
+              [ A.class' "mt3" ]
+              [ H.pre
+                  [ A.class' "center measure overflow-x-auto courier db" ]
+                  [ H.text $ renderText displayObject ]
+              ]
           ]
     ]
 
@@ -181,6 +196,8 @@ instance showDisplayCharacter :: Show DisplayCharacter where
   show = unwrap >>> map Array.fromFoldable >>> Array.fromFoldable >>> show
 
 derive instance newtypeDisplayCharacter :: Newtype DisplayCharacter _
+
+derive instance eqDisplayCharacter :: Eq DisplayCharacter
 
 instance monoidDisplayCharacter :: Monoid DisplayCharacter where
   mempty =
@@ -198,16 +215,6 @@ instance semigroupDisplayCharacter :: Semigroup DisplayCharacter where
 
 asDisplayCharacter :: Array (Array String) -> DisplayCharacter
 asDisplayCharacter = map List.fromFoldable >>> List.fromFoldable >>> DisplayCharacter
-
-letterSpacing :: String -> DisplayCharacter
-letterSpacing o =
-  asDisplayCharacter
-    [ [ o ]
-    , [ o ]
-    , [ o ]
-    , [ o ]
-    , [ o ]
-    ]
 
 characterMatrix :: String -> String -> String -> DisplayCharacter
 characterMatrix x o "A" =
