@@ -1,10 +1,11 @@
 module Main where
 
 import Prelude
+import Effect.Class (liftEffect)
 import Data.Array (fold)
 import Data.List (List(..))
 import Data.List as List
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Newtype (wrap, unwrap, class Newtype)
 import Data.Tuple (Tuple)
@@ -17,6 +18,8 @@ import Flame.Application.EffectList (Application)
 import Flame.Html.Attribute as A
 import Flame.Html.Element as H
 import Flame.Html.Event as E
+import Data.Array as Array
+import Effect.Console (log)
 
 type Model
   = { emojiName :: String
@@ -26,6 +29,20 @@ type Model
 
 render :: Model -> DisplayCharacter
 render { emojiName, placeholderName, content } = fold $ characterMatrix emojiName placeholderName <$> String.split (wrap "") content
+
+renderView :: Model -> DisplayCharacter -> Html Msg
+renderView { emojiName } (DisplayCharacter rows) = H.div_ $ renderRow <$> Array.fromFoldable rows
+  where
+  renderRow :: List String -> Html Msg
+  renderRow columns =
+    H.div_
+      $ ( \col ->
+            if col == emojiName then
+              H.img [ A.class' "w2 h2 bg-black" ]
+            else
+              H.img [ A.class' "w2 h2 bg-white" ]
+        )
+      <$> Array.fromFoldable columns
 
 data Msg
   = EmojiNameChanged String
@@ -58,8 +75,12 @@ update model (PlaceholderNameChanged placeholderName) =
     /\ mempty
 
 update model (ContentChanged content) =
-  model { content = content }
-    /\ mempty
+  let
+    nextModel = model { content = content }
+
+    logEffect = map (const Nothing) <<< log <<< show $ render nextModel
+  in
+    nextModel /\ [ liftEffect logEffect ]
 
 inputClass :: String
 inputClass = "pa2 black-80 br2 b--light-blue b--solid avenir f5"
@@ -105,12 +126,27 @@ view model =
                 , E.onInput PlaceholderNameChanged
                 ]
             ]
+        , H.div
+            [ A.class' "mt3" ]
+            [ H.label
+                [ A.class' inputLabelClass
+                , A.for "content"
+                ]
+                [ H.text "Content" ]
+            , H.br
+            , H.input
+                [ A.type' "text"
+                , A.class' inputClass
+                , A.id "content"
+                , A.value model.content
+                , E.onInput ContentChanged
+                ]
+            ]
         ]
-    , H.pre
-        [ A.class' "mt3 courier" ]
-        [ H.code_
-            [ H.text "" ]
-        ]
+    , let
+        displayObject = render model
+      in
+        renderView model displayObject
     ]
 
 main :: Effect Unit
@@ -118,6 +154,9 @@ main = Flame.mount_ (wrap "#app") application
 
 newtype DisplayCharacter
   = DisplayCharacter (List (List String))
+
+instance showDisplayCharacter :: Show DisplayCharacter where
+  show = unwrap >>> map Array.fromFoldable >>> Array.fromFoldable >>> show
 
 derive instance newtypeDisplayCharacter :: Newtype DisplayCharacter _
 
