@@ -78,6 +78,7 @@ data Msg
   = EmojiNameChanged String
   | PlaceholderNameChanged String
   | ContentChanged String
+  | NoOp
 
 application :: Application Model Msg
 application =
@@ -91,7 +92,7 @@ init :: Tuple Model (Array (Aff (Maybe Msg)))
 init =
   { emojiName: "awesome-face"
   , placeholderName: "blank"
-  , content: "cool"
+  , content: "COOL"
   }
     /\ mempty
 
@@ -107,6 +108,8 @@ update model (PlaceholderNameChanged placeholderName) =
 update model (ContentChanged content) =
   model { content = String.toUpper content }
     /\ mempty
+
+update model NoOp = model /\ mempty
 
 inputClass :: String
 inputClass = "pa2 black-80 br2 b--blue outline-light-blue b--solid avenir f5"
@@ -177,11 +180,15 @@ view model =
               [ A.class' "mt3" ]
               [ renderView model displayObject
               ]
-          , H.div
-              [ A.class' "mt3" ]
-              [ H.pre
-                  [ A.class' "center measure-wide overflow-x-auto courier db" ]
-                  [ H.text $ renderText displayObject ]
+          , H.textarea
+              [ A.class' "mt3 db courier center measure-wide"
+              , A.value (renderText displayObject)
+              , E.onInput $ const NoOp
+              , E.onChange NoOp
+              , A.rows 5
+              , A.cols $ 300
+              ]
+              [ H.text $ renderText displayObject
               ]
           ]
     ]

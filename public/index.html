@@ -5,28 +5,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Thing</title>
+    <title>Emoji Writer</title>
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
 </head>
 
 <body>
     <style type="text/css">
-      .w1\.5 {
-        width: 1.5rem;
-      }
-      .h1\.5 {
-        height: 1.5rem;
-      }
-      .outline-light-blue:focus {
-        outline: 0.0625rem solid #96CCFF;
-        outline-offset: 0.125rem;
-      }
-      input[type="text"]:hover:not(:focus) {
-        background-color: #F6FBFF;
-      }
-      textarea {
-        word-wrap: normal;
-      }
+        .w1\.5 {
+            width: 1.5rem;
+        }
+
+        .h1\.5 {
+            height: 1.5rem;
+        }
+
+        .outline-light-blue:focus {
+            outline: 0.0625rem solid #357edd;
+            outline-offset: 0.125rem;
+            border: 1px solid rgba(53, 126, 221, 0.2);
+        }
+
+        input[type="text"]:hover:not(:focus) {
+            background-color: #F6FBFF;
+        }
+
+        textarea {
+            word-wrap: normal;
+            white-space: pre;
+        }
     </style>
     <div id="app"></div>
     <script src="/app.bundle.min.js"></script>
