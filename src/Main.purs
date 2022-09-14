@@ -89,9 +89,9 @@ application =
 
 init :: Tuple Model (Array (Aff (Maybe Msg)))
 init =
-  { emojiName: ""
-  , placeholderName: ""
-  , content: ""
+  { emojiName: "awesome-face"
+  , placeholderName: "blank"
+  , content: "cool"
   }
     /\ mempty
 
@@ -305,6 +305,150 @@ characterMatrix x o "J" =
     , [ o, o, x ]
     , [ x, o, x ]
     , [ o, x, o ]
+    ]
+
+characterMatrix x o "K" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, x, o ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "L" =
+  asDisplayCharacter
+    [ [ x, o, o ]
+    , [ x, o, o ]
+    , [ x, o, o ]
+    , [ x, o, o ]
+    , [ x, x, x ]
+    ]
+
+characterMatrix x o "M" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "N" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "O" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, x, x ]
+    ]
+
+characterMatrix x o "P" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, x, x ]
+    , [ x, o, o ]
+    , [ x, o, o ]
+    ]
+
+characterMatrix x o "Q" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, x, x ]
+    , [ o, o, x ]
+    ]
+
+characterMatrix x o "R" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, x ]
+    , [ x, x, o ]
+    , [ x, x, o ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "S" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ x, o, o ]
+    , [ x, x, x ]
+    , [ o, o, x ]
+    , [ x, x, x ]
+    ]
+
+characterMatrix x o "T" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    ]
+
+characterMatrix x o "U" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, x, x ]
+    ]
+
+characterMatrix x o "V" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    ]
+
+characterMatrix x o "W" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, o, x ]
+    , [ x, x, x ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "X" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ x, o, x ]
+    ]
+
+characterMatrix x o "Y" =
+  asDisplayCharacter
+    [ [ x, o, x ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    , [ o, x, o ]
+    ]
+
+characterMatrix x o "Z" =
+  asDisplayCharacter
+    [ [ x, x, x ]
+    , [ o, o, x ]
+    , [ o, x, o ]
+    , [ x, o, o ]
+    , [ x, x, x ]
     ]
 
 characterMatrix _ o " " =
